@@ -6,6 +6,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 # # to view graphs in notebook
 # %matplotlib inline
+import plotly
+import cufflinks as cf
+# # For offline use
+# cf.go_offline()
 
 # # extract stock data from 2006 to 2016 using Remote Data Access
 start = datetime.datetime(2006, 1, 1)
@@ -54,4 +58,17 @@ returns.loc['2015-01-01':'2015-12-31'].std()
 sns.histplot(returns.loc['2015-01-01':'2015-12-31']['MS Return'],color='green',bins=100)
 sns.histplot(returns.loc['2008-01-01':'2008-12-31']['C Return'],color='red',bins=100)
 
+# create an interactive line plot using cufflinks showing close price for each bank stock
+bank_stocks.xs(key='Close',axis=1,level='Stock Info').iplot()
 
+# create a heatmap of the correlation between the stocks Close Price
+sns.heatmap(bank_stocks.xs(key='Close',axis=1,level='Stock Info').corr(),annot=True)
+
+# create a candle plot of Bank of America's stock from Jan 1st 2015 to Jan 1st 2016
+BAC[['Open', 'High', 'Low', 'Close']].loc['2015-01-01':'2016-01-01'].iplot(kind='candle')
+
+# create a Simple Moving Averages plot of Morgan Stanley for the year 2015
+MS['Close'].loc['2015-01-01':'2016-01-01'].ta_plot(study='sma',periods=[13,21,55],title='Simple Moving Averages')
+
+# create a Bollinger Band Plot for Bank of America for the year 2015
+BAC['Close'].loc['2015-01-01':'2016-01-01'].ta_plot(study='boll')
